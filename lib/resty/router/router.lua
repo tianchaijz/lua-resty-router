@@ -32,7 +32,7 @@ do
     local splat = P"*"
     local char_class = P"[" * C((1 - P"]") ^ 1) * P"]"
     local char_range = C(1) * P"-" * C(1) / function(a, b) return a .. b end
-    local char_set = C(P"%" * S"adw" + char_range + 1)
+    local char_set = C(P"%" * S"adw%-" + char_range + 1)
     local char_class_inner = Ct(C"^" ^ -1 * char_set ^ 1)
     local var = P":" * C(alpha * alpha_num ^ 0) * char_class ^ -1
 
@@ -64,6 +64,10 @@ do
                 patterns[#patterns + 1] = R("09")
             elseif item == "%w" then
                 patterns[#patterns + 1] = R("09", "az", "AZ")
+            elseif item == "%%" then
+                patterns[#patterns + 1] = P"%"
+            elseif item == "%-" then
+                patterns[#patterns + 1] = P"-"
             elseif #item == 2 then
                 patterns[#patterns + 1] = R(item)
             else

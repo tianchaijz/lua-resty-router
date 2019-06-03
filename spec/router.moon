@@ -149,6 +149,33 @@ describe "RouteParser.parse", ->
       {"/one.two", nil}
     }}
 
+    {"/:nope[%%%w]", {
+      {"/%20", {nope: "%20"}}
+      {"/hi%20", {nope: "hi%20"}}
+      {"/", nil}
+    }}
+
+    {"/:nope[%-ab]", {
+      {"/-", {nope: "-"}}
+      {"/--", {nope: "--"}}
+      {"/-ab", {nope: "-ab"}}
+      {"/ab-", {nope: "ab-"}}
+      {"/a-b", {nope: "a-b"}}
+      {"/", nil}
+      {"/%ab", nil}
+      {"/%20", nil}
+    }}
+
+    {"/:nope[%%w%-ab]", {
+      {"/-", {nope: "-"}}
+      {"/%ab", {nope: "%ab"}}
+      {"/%ab-", {nope: "%ab-"}}
+      {"/%ab-%ab-", {nope: "%ab-%ab-"}}
+      {"/w", {nope: "w"}}
+      {"/c", nil}
+      {"/", nil}
+    }}
+
   }
     do_test = (pattern, test, result) ->
       it "matches `#{pattern}` with `#{test}`", ->
